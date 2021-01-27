@@ -1,0 +1,101 @@
+
+ Eopch:     1 validation loss = 0.1569, image loss = 0.1652,  roi loss =0.1379 fusion loss =0.1369
+
+ Eopch:     2 validation loss = 0.1531, image loss = 0.1619,  roi loss =0.1332 fusion loss =0.1312
+
+ Eopch:     3 validation loss = 0.1482, image loss = 0.1564,  roi loss =0.1302 fusion loss =0.1267
+
+ Eopch:     4 validation loss = 0.1465, image loss = 0.1541,  roi loss =0.1304 fusion loss =0.1257
+
+ Eopch:     5 validation loss = 0.1492, image loss = 0.1576,  roi loss =0.1312 fusion loss =0.1272
+
+ Eopch:     6 validation loss = 0.1448, image loss = 0.1533,  roi loss =0.1266 fusion loss =0.1219
+
+ Eopch:     7 validation loss = 0.1518, image loss = 0.1616,  roi loss =0.1293 fusion loss =0.1280
+
+ Eopch:     8 validation loss = 0.1492, image loss = 0.1578,  roi loss =0.1300 fusion loss =0.1271
+
+ Eopch:     9 validation loss = 0.1453, image loss = 0.1538,  roi loss =0.1271 fusion loss =0.1225
+
+ Eopch:    10 validation loss = 0.1435, image loss = 0.1520,  roi loss =0.1248 fusion loss =0.1217
+
+ Eopch:    11 validation loss = 0.1439, image loss = 0.1532,  roi loss =0.1239 fusion loss =0.1191
+
+ Eopch:    12 validation loss = 0.1455, image loss = 0.1540,  roi loss =0.1272 fusion loss =0.1230
+
+ Eopch:    13 validation loss = 0.1453, image loss = 0.1539,  roi loss =0.1269 fusion loss =0.1217
+
+ Eopch:    14 validation loss = 0.1447, image loss = 0.1541,  roi loss =0.1243 fusion loss =0.1197
+
+ Eopch:    15 validation loss = 0.1426, image loss = 0.1522,  roi loss =0.1211 fusion loss =0.1188
+
+ Eopch:    16 validation loss = 0.1429, image loss = 0.1514,  roi loss =0.1244 fusion loss =0.1205
+
+ Eopch:    17 validation loss = 0.1430, image loss = 0.1525,  roi loss =0.1224 fusion loss =0.1181
+
+ Eopch:    18 validation loss = 0.1451, image loss = 0.1537,  roi loss =0.1261 fusion loss =0.1226
+
+ Eopch:    19 validation loss = 0.1418, image loss = 0.1511,  roi loss =0.1214 fusion loss =0.1174
+
+ Eopch:    20 validation loss = 0.1451, image loss = 0.1550,  roi loss =0.1232 fusion loss =0.1200
+
+ Eopch:    21 validation loss = 0.1456, image loss = 0.1544,  roi loss =0.1259 fusion loss =0.1238
+
+ Eopch:    22 validation loss = 0.1421, image loss = 0.1510,  roi loss =0.1223 fusion loss =0.1194
+
+ Eopch:    23 validation loss = 0.1433, image loss = 0.1529,  roi loss =0.1220 fusion loss =0.1182
+
+ Eopch:    24 validation loss = 0.1444, image loss = 0.1524,  roi loss =0.1271 fusion loss =0.1227
+
+ Eopch:    25 validation loss = 0.1440, image loss = 0.1530,  roi loss =0.1237 fusion loss =0.1208
+
+ Eopch:    26 validation loss = 0.1429, image loss = 0.1515,  roi loss =0.1242 fusion loss =0.1196
+
+ Eopch:    27 validation loss = 0.1423, image loss = 0.1517,  roi loss =0.1219 fusion loss =0.1179
+
+ Eopch:    28 validation loss = 0.1415, image loss = 0.1506,  roi loss =0.1213 fusion loss =0.1176
+
+ Eopch:    29 validation loss = 0.1424, image loss = 0.1510,  roi loss =0.1236 fusion loss =0.1194
+
+ Eopch:    30 validation loss = 0.1413, image loss = 0.1501,  roi loss =0.1219 fusion loss =0.1181
+
+ Eopch:    31 validation loss = 0.1419, image loss = 0.1512,  roi loss =0.1214 fusion loss =0.1184
+
+ Eopch:    32 validation loss = 0.1420, image loss = 0.1503,  roi loss =0.1239 fusion loss =0.1197
+
+ Eopch:    33 validation loss = 0.1417, image loss = 0.1514,  roi loss =0.1207 fusion loss =0.1166
+
+ Eopch:    34 validation loss = 0.1409, image loss = 0.1505,  roi loss =0.1199 fusion loss =0.1157
+
+ Eopch:    35 validation loss = 0.1420, image loss = 0.1513,  roi loss =0.1216 fusion loss =0.1182
+
+ Eopch:    36 validation loss = 0.1432, image loss = 0.1533,  roi loss =0.1206 fusion loss =0.1172
+
+ Eopch:    37 validation loss = 0.1433, image loss = 0.1528,  roi loss =0.1220 fusion loss =0.1187
+
+ Eopch:    38 validation loss = 0.1414, image loss = 0.1509,  roi loss =0.1203 fusion loss =0.1167
+
+ Eopch:    39 validation loss = 0.1414, image loss = 0.1510,  roi loss =0.1202 fusion loss =0.1168
+
+ Eopch:    40 validation loss = 0.1428, image loss = 0.1527,  roi loss =0.1209 fusion loss =0.1177
+
+ Eopch:    41 validation loss = 0.1440, image loss = 0.1536,  roi loss =0.1223 fusion loss =0.1196
+
+ Eopch:    42 validation loss = 0.1416, image loss = 0.1508,  roi loss =0.1214 fusion loss =0.1173
+
+ Eopch:    43 validation loss = 0.1441, image loss = 0.1526,  roi loss =0.1256 fusion loss =0.1219
+
+ Eopch:    44 validation loss = 0.1422, image loss = 0.1519,  roi loss =0.1211 fusion loss =0.1167
+
+ Eopch:    45 validation loss = 0.1435, image loss = 0.1519,  roi loss =0.1252 fusion loss =0.1218
+
+ Eopch:    46 validation loss = 0.1406, image loss = 0.1495,  roi loss =0.1215 fusion loss =0.1172
+
+ Eopch:    47 validation loss = 0.1415, image loss = 0.1510,  roi loss =0.1203 fusion loss =0.1171
+
+ Eopch:    48 validation loss = 0.1419, image loss = 0.1507,  roi loss =0.1228 fusion loss =0.1182
+
+ Eopch:    49 validation loss = 0.1419, image loss = 0.1510,  roi loss =0.1220 fusion loss =0.1174
+
+ Eopch:    50 validation loss = 0.1418, image loss = 0.1512,  roi loss =0.1212 fusion loss =0.1177 Eopch:     1 validation loss = 0.4479, image loss = 0.1658,  roi loss =0.1419 fusion loss =0.1403
+ Eopch:     2 validation loss = 0.4403, image loss = 0.1661,  roi loss =0.1371 fusion loss =0.1371
