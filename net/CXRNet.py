@@ -21,25 +21,32 @@ from torch.autograd import Variable
 from PIL import Image
 import matplotlib.pyplot as plt
 #define myself
-from config import *
+#from config import *
 #construct model
 class ImageClassifier(nn.Module):
     def __init__(self, num_classes, is_pre_trained=True):
         super(ImageClassifier, self).__init__()
         self.msa = MultiScaleAttention()
         self.dense_net_121 = torchvision.models.densenet121(pretrained=is_pre_trained)
-        #self.avgpool = nn.AvgPool2d(kernel_size=7, stride=1)
-        self.classifier = nn.Sequential(nn.Linear(49, num_classes), nn.Sigmoid())
+        self.sigmoid = nn.Sigmoid() 
+        self.adapool = nn.AdaptiveAvgPool2d((7, 7))
+        self.avgpool = nn.AvgPool2d(kernel_size=7, stride=1)
+        self.classifier = nn.Sequential(nn.Linear(1024, num_classes), nn.Sigmoid())
         
-    def forward(self, x):
+    def forward(self, x, mask):
         #x: N*C*W*H
         x = self.msa(x) * x
-        conv_fea = self.dense_net_121.features(x)
-        conv_fea = conv_fea.mean(1).unsqueeze(1) #1024*7*7->1*7*7
-        fc_fea = conv_fea.view(conv_fea.size(0), -1)
-        #fc_fea = self.avgpool(conv_fea).view(conv_fea.size(0), -1)
-        out = self.classifier(fc_fea)
-        return conv_fea, fc_fea, out
+        x = self.dense_net_121.features(x)
+        x = self.sigmoid(x)
+
+        mask = self.adapool(mask)
+        mask = mask.ge(0.5).float() #0,1 binarization
+        x = torch.mul(x, mask)
+
+        x = self.avgpool(x)
+        x = x.view(x.size(0), -1)
+        x = self.classifier(x)
+        return x
         
 class MultiScaleAttention(nn.Module):#multi-scal attention module
     def __init__(self):
@@ -68,74 +75,47 @@ class MultiScaleAttention(nn.Module):#multi-scal attention module
 
         return x
 
-class RegionClassifier(nn.Module):
-    def __init__(self, num_classes):
-        super(RegionClassifier, self).__init__()
-        self.adapool = nn.AdaptiveAvgPool2d((7, 7))
-        self.classifier = nn.Sequential(nn.Linear(49, num_classes), nn.Sigmoid())
-        
-    def forward(self, conv_fea, mask):
-        #x: N*C*W*H
-        mask = self.adapool(mask)
-        mask = mask.ge(0.5).float() #0,1 binarization
-        #mask = mask.repeat(1, conv_fea.size(1), 1, 1) #bz*1*7*7 -> bz*1024*7*7
-        """
-        #show
-        cam = conv_fea[0].detach().cpu().squeeze().numpy()
-        cam = (cam - cam.min()) / (cam.max() - cam.min())
-        cam = cv2.applyColorMap(np.uint8(cam * 255.0), cv2.COLORMAP_JET) #L to RGB
-        fig, ax = plt.subplots(1)# Create figure and axes
-        ax.imshow(cam)
-        ax.axis('off')
-        fig.savefig('/data/pycode/CXR-IRNet/imgs/cam_before.png')
-        """
-        conv_fea = torch.mul(conv_fea, mask)
-        """
-        #show
-        cam = conv_fea[0].detach().cpu().squeeze().numpy()
-        cam = (cam - cam.min()) / (cam.max() - cam.min())
-        cam = cv2.applyColorMap(np.uint8(cam * 255.0), cv2.COLORMAP_JET) #L to RGB
-        fig, ax = plt.subplots(1)# Create figure and axes
-        ax.imshow(cam)
-        ax.axis('off')
-        fig.savefig('/data/pycode/CXR-IRNet/imgs/cam_after.png')
-        """
-        fc_fea = conv_fea.view(conv_fea.size(0), -1)
-        out = self.classifier(fc_fea)
-        return fc_fea, out
+#https://github.com/qianjinhao/circle-loss/blob/master/circle_loss.py
+class CircleLoss(nn.Module):
+    def __init__(self, scale=1, margin=0.25, similarity='cos', **kwargs):
+        super(CircleLoss, self).__init__()
+        self.scale = scale
+        self.margin = margin
+        self.similarity = similarity
 
-class FusionClassifier(nn.Module):
-    def __init__(self, input_size, num_classes):
-        super(FusionClassifier, self).__init__()
-        self.classifier = nn.Sequential(nn.Linear(input_size, num_classes), nn.Sigmoid())
+    def forward(self, feats, labels):
+        assert feats.size(0) == labels.size(0), f"feats.size(0): {feats.size(0)} is not equal to labels.size(0): {labels.size(0)}"
 
-    def forward(self, fc_fea_img, fc_fea_roi):
-        fc_fea_fusion = torch.cat((fc_fea_img,fc_fea_roi), 1)
-        out = self.classifier(fc_fea_fusion)
-        return out
+        mask = torch.matmul(labels, torch.t(labels))
+        mask = torch.where(mask==2, torch.ones_like(mask), mask) #for multi-label
+        pos_mask = mask.triu(diagonal=1)
+        neg_mask = (mask - 1).abs_().triu(diagonal=1)
+        if self.similarity == 'dot':
+            sim_mat = torch.matmul(feats, torch.t(feats))
+        elif self.similarity == 'cos':
+            feats = F.normalize(feats)
+            sim_mat = feats.mm(feats.t())
+        else:
+            raise ValueError('This similarity is not implemented.')
+
+        pos_pair_ = sim_mat[pos_mask == 1]
+        neg_pair_ = sim_mat[neg_mask == 1]
+        #neg_pair_ = sim_mat[neg_mask == 1][0:len(pos_pair_)] #for sampling part normal 
+
+        alpha_p = torch.relu(-pos_pair_ + 1 + self.margin)
+        alpha_n = torch.relu(neg_pair_ + self.margin)
+        margin_p = 1 - self.margin
+        margin_n = self.margin
+        loss_p = torch.sum(torch.exp(-self.scale * alpha_p * (pos_pair_ - margin_p)))
+        loss_n = torch.sum(torch.exp(self.scale * alpha_n * (neg_pair_ - margin_n)))
+        loss = torch.log(1 + loss_p * loss_n)
+        return loss
 
 if __name__ == "__main__":
     #for debug   
-    img = torch.rand(32, 3, 224, 224).to(torch.device('cuda:%d'%7))
-    label = torch.zeros(32, 14)
-    for i in range(32):#generate 1 randomly
-        ones_n = random.randint(1,2)
-        col = [random.randint(0,13) for _ in range(ones_n)]
-        label[i, col] = 1
-    model_img = CXRClassifier(num_classes=14, is_pre_trained=True, is_roi=False).to(torch.device('cuda:%d'%7))
-    conv_fea_img, fc_fea_img, out_img = model_img(img)
+    img = torch.rand(10, 3, 224, 224)#.to(torch.device('cuda:%d'%7))
+    model = ImageClassifier(num_classes=14, is_pre_trained=True)
+    out = model(img)
+    print(out.size())
 
-    roigen = ROIGenerator()
-    cls_weights = list(model_img.parameters())
-    weight_softmax = np.squeeze(cls_weights[-5].data.cpu().numpy())
-    roi = roigen.ROIGeneration(img.cpu(), conv_fea_img, weight_softmax, label)
-    model_roi = CXRClassifier(num_classes=14, is_pre_trained=True, is_roi=True).to(torch.device('cuda:%d'%7))
-    var_roi = torch.autograd.Variable(roi).to(torch.device('cuda:%d'%7))
-    _, fc_fea_roi, out_roi = model_roi(var_roi)
-
-    model_fusion = FusionClassifier(input_size = 2048, output_size = 14).to(torch.device('cuda:%d'%7))
-    fc_fea_fusion = torch.cat((fc_fea_img,fc_fea_roi), 1)
-    var_fusion = torch.autograd.Variable(fc_fea_fusion).to(torch.device('cuda:%d'%7))
-    out_fusion = model_fusion(var_fusion)
-    print(out_fusion.size())
 
